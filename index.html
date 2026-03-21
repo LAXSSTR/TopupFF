@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAXSTORE - TOPUP FF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #0f172a; color: white; font-family: sans-serif; margin: 0; padding-bottom: 30px; }
+        
+        .produk-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px;
+            padding: 0 15px;
+        }
+
+        .item-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 18px;
+            padding: 20px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .item-card:active { 
+            transform: scale(0.95); 
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .diamond-icon { font-size: 22px; margin-bottom: 8px; color: #38bdf8; }
+        .crown-icon { color: #fbbf24; }
+        .item-name { font-size: 13px; font-weight: 600; color: #cbd5e1; }
+        .item-price { font-size: 14px; font-weight: 800; color: #38bdf8; margin-top: 4px; }
+
+        .input-box {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 20px;
+            border-radius: 24px;
+            margin: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        input:focus { border-color: #38bdf8; }
+
+        .payment-section { margin-top: 35px; text-align: center; padding: 0 15px; }
+        .payment-title { font-size: 10px; color: #64748b; margin-bottom: 12px; font-weight: 800; letter-spacing: 1.5px; }
+        .payment-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 18px;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+        }
+        .pay-logo { height: 16px; }
+        .seabank-text { font-size: 11px; font-weight: 900; color: #f53d2d; }
+
+        #modalCheckout {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            width: 100%;
+            max-width: 340px;
+            border-radius: 28px;
+            padding: 25px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-align: center;
+        }
+
+        .btn-wa {
+            background: #16a34a;
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border-radius: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav style="padding: 25px 15px 15px 15px; text-align: center;">
+        <h1 style="color: #38bdf8; font-weight: 900; font-size: 26px; margin: 0; letter-spacing: -1px;">LAXSTORE</h1>
+        <p style="font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px;">TopUp Satset Anti Macet</p>
+    </nav>
+
+    <div class="input-box">
+        <p style="font-size: 11px; font-weight: bold; color: #38bdf8; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center;">
+            <i class="fas fa-user-circle mr-2 text-lg"></i> ˋ Masukkan Data Akun
+        </p>
+        <input type="number" id="userId" placeholder="User ID">
+        <input type="text" id="nickname" placeholder="Nickname">
+    </div>
+
+    <p style="font-size: 11px; font-weight: bold; color: #94a3b8; margin-left: 20px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center;">
+        <i class="fas fa-coins mr-2 text-lg"></i>  Pilih Nominal Diamond
+    </p>
+    
+    <div class="produk-container" id="productGrid"></div>
+
+    <div class="payment-section">
+        <p class="payment-title">METODE PEMBAYARAN</p>
+        <div class="payment-bar">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" class="pay-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" class="pay-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" class="pay-logo">
+            <div class="seabank-text">🏦SEABANK</div>
+        </div>
+    </div>
+
+    <div id="modalCheckout">
+        <div class="modal-content">
+            <div style="width: 60px; height: 60px; background: rgba(56, 189, 248, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-shopping-basket text-sky-500 text-2xl"></i>
+            </div>
+            <h2 style="font-weight: 900; font-size: 20px; color: white; margin-bottom: 5px;">DETAIL PESANAN</h2>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">Konfirmasi data sebelum checkout</p>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 20px; font-size: 14px; text-align: left; line-height: 2; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Produk:</span> <b id="resItem"></b></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Harga:</span> <b id="resPrice" style="color: #38bdf8;"></b></div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; padding-top: 10px;"><span style="color:#64748b">ID:</span> <b id="resId"></b></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color:#64748b">Nick:</span> <b id="resNick"></b></div>
+            </div>
+
+            <button class="btn-wa" onclick="sendToWA()">
+                <i class="fab fa-whatsapp text-lg"></i> KONFIRMASI PEMBAYARAN
+            </button>
+            <p onclick="closeModal()" style="margin-top: 20px; font-size: 11px; color: #64748b; font-weight: bold; cursor: pointer; text-transform: uppercase;">Batal</p>
+        </div>
+    </div>
+
+    <script>
+        const dataProduk = [
+            { n: "Memb. Mingguan", p: "29.000", i: "fa-crown" },
+            { n: "Memb. Bulanan", p: "89.000", i: "fa-crown" },
+            { n: "5 Diamond", p: "2.000" }, { n: "12 Diamond", p: "2.500" },
+            { n: "15 Diamond", p: "3.000" }, { n: "20 Diamond", p: "4.000" },
+            { n: "25 Diamond", p: "5.000" }, { n: "30 Diamond", p: "6.000" },
+            { n: "40 Diamond", p: "7.500" }, { n: "50 Diamond", p: "8.000" },
+            { n: "55 Diamond", p: "9.000" }, { n: "70 Diamond", p: "10.000" },
+            { n: "75 Diamond", p: "11.000" }, { n: "80 Diamond", p: "12.000" },
+            { n: "90 Diamond", p: "14.000" }, { n: "100 Diamond", p: "15.000" },
+            { n: "120 Diamond", p: "17.000" }, { n: "130 Diamond", p: "19.000" },
+            { n: "140 Diamond", p: "20.000" }, { n: "145 Diamond", p: "21.000" },
+            { n: "150 Diamond", p: "22.000" }, { n: "160 Diamond", p: "24.000" },
+            { n: "190 Diamond", p: "28.000" }, { n: "200 Diamond", p: "29.000" },
+            { n: "210 Diamond", p: "30.000" }, { n: "250 Diamond", p: "38.000" },
+            { n: "260 Diamond", p: "39.000" }, { n: "280 Diamond", p: "40.000" },
+            { n: "300 Diamond", p: "45.000" }, { n: "355 Diamond", p: "50.000" },
+            { n: "375 Diamond", p: "53.000" }, { n: "405 Diamond", p: "58.000" },
+            { n: "420 Diamond", p: "59.000" }, { n: "425 Diamond", p: "60.000" },
+            { n: "475 Diamond", p: "65.000" }, { n: "500 Diamond", p: "69.000" },
+            { n: "510 Diamond", p: "71.000" }, { n: "545 Diamond", p: "76.000" },
+            { n: "565 Diamond", p: "79.000" }, { n: "635 Diamond", p: "89.000" },
+            { n: "720 Diamond", p: "100.000" }, { n: "770 Diamond", p: "105.000" },
+            { n: "790 Diamond", p: "107.000" }, { n: "800 Diamond", p: "108.000" },
+            { n: "860 Diamond", p: "115.000" }, { n: "930 Diamond", p: "127.000" },
+            { n: "1000 Diamond", p: "135.000" }, { n: "1050 Diamond", p: "139.000" },
+            { n: "1075 Diamond", p: "140.000" }, { n: "1080 Diamond", p: "141.000" },
+            { n: "1450 Diamond", p: "190.000" }, { n: "2000 Diamond", p: "263.000" }
+        ];
+
+        const grid = document.getElementById('productGrid');
+        dataProduk.forEach(item => {
+            const iconClass = item.i || 'fa-gem';
+            const colorClass = item.i ? 'crown-icon' : '';
+            grid.innerHTML += `
+                <div class="item-card" onclick="openCheckout('${item.n}', '${item.p}')">
+                    <i class="fas ${iconClass} diamond-icon ${colorClass}"></i>
+                    <div class="item-name">${item.n}</div>
+                    <div class="item-price">Rp ${item.p}</div>
+                </div>
+            `;
+        });
+
+        let currentOrder = {};
+
+        function openCheckout(item, price) {
+            const id = document.getElementById('userId').value;
+            const nick = document.getElementById('nickname').value;
+            if(!id || !nick) { alert("Waduh! Masukkan ID & Nickname dulu ya!"); return; }
+
+            currentOrder = { item, price, id, nick };
+            document.getElementById('resItem').innerText = item;
+            document.getElementById('resPrice').innerText = "Rp " + price;
+            document.getElementById('resId').innerText = id;
+            document.getElementById('resNick').innerText = nick;
+            document.getElementById('modalCheckout').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalCheckout').style.display = 'none'; }
+
+        function sendToWA() {
+            const msg = `Halo Admin LAXSTORE! 👋\n\nSaya ingin Top Up FF:\n📦 *Item:* ${currentOrder.item}\n💰 *Harga:* Rp ${currentOrder.price}\n🆔 *ID:* ${currentOrder.id}\n👤 *Nick:* ${currentOrder.nick}\n\nMohon instruksi pembayarannya Admin!`;
+            window.open(`https://wa.me/6285642962052?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
