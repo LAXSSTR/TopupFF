@@ -64,26 +64,14 @@
         
         input:focus { border-color: #38bdf8; }
 
-        .payment-section { margin-top: 35px; text-align: center; padding: 0 15px; }
-        .payment-title { font-size: 10px; color: #64748b; margin-bottom: 12px; font-weight: 800; letter-spacing: 1.5px; }
-        .payment-bar {
-            display: inline-flex;
-            align-items: center;
-            gap: 18px;
-            padding: 12px 20px;
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 16px;
-        }
-        .pay-logo { height: 16px; }
-        .seabank-text { font-size: 11px; font-weight: 900; color: #f53d2d; }
-
-        #modalCheckout {
+        /* Modal Overlay */
+        .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(5px);
-            z-index: 1000;
+            z-index: 2000;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -97,11 +85,15 @@
             padding: 25px;
             border: 1px solid rgba(56, 189, 248, 0.2);
             text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .btn-wa {
-            background: #16a34a;
-            color: white;
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .btn-wa, .btn-alert-ok {
             width: 100%;
             padding: 16px;
             border-radius: 18px;
@@ -113,7 +105,24 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            cursor: pointer;
         }
+
+        .btn-wa { background: #16a34a; color: white; }
+        .btn-alert-ok { background: #38bdf8; color: #0f172a; }
+
+        .payment-section { margin-top: 35px; text-align: center; padding: 0 15px; }
+        .payment-title { font-size: 10px; color: #64748b; margin-bottom: 12px; font-weight: 800; letter-spacing: 1.5px; }
+        .payment-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 18px;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+        }
+        .pay-logo { height: 16px; }
+        .seabank-text { font-size: 11px; font-weight: 900; color: #f53d2d; }
     </style>
 </head>
 <body>
@@ -147,7 +156,18 @@
         </div>
     </div>
 
-    <div id="modalCheckout">
+    <div id="modalAlert" class="modal-overlay">
+        <div class="modal-content">
+            <div style="width: 60px; height: 60px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-exclamation-triangle text-amber-500 text-2xl"></i>
+            </div>
+            <h2 style="font-weight: 900; font-size: 18px; color: white;">DATA TIDAK LENGKAP</h2>
+            <p style="font-size: 13px; color: #94a3b8; margin-top: 10px;">Waduh! Masukkan ID & Nickname dulu ya!</p>
+            <button class="btn-alert-ok" onclick="closeAlert()">OKE SIAP 🖕</button>
+        </div>
+    </div>
+
+    <div id="modalCheckout" class="modal-overlay">
         <div class="modal-content">
             <div style="width: 60px; height: 60px; background: rgba(56, 189, 248, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
                 <i class="fas fa-shopping-basket text-sky-500 text-2xl"></i>
@@ -175,8 +195,8 @@
             { n: "Memb. Bulanan", p: "86.000", i: "fa-crown" },
             { n: "5 Diamond", p: "1,500" }, { n: "10 Diamond", p: "2.500" },
             { n: "15 Diamond", p: "3.000" }, { n: "20 Diamond", p: "4.000" },
-            { n: "25 Diamond", p: "5.000" }, { n: "30 Diamond", p: "6.000" },
-            { n: "40 Diamond", p: "7.000" }, { n: "50 Diamond", p: "7.500" },
+            { n: "25 Diamond", p: "5.000" }, { n: "30 Diamond", p: "5.500" },
+            { n: "40 Diamond", p: "6.500" }, { n: "50 Diamond", p: "7.500" },
             { n: "55 Diamond", p: "8.500" }, { n: "70 Diamond", p: "9.500" },
             { n: "75 Diamond", p: "10.500" }, { n: "80 Diamond", p: "11.500" },
             { n: "90 Diamond", p: "13.500" }, { n: "100 Diamond", p: "14.500" },
@@ -218,7 +238,12 @@
         function openCheckout(item, price) {
             const id = document.getElementById('userId').value;
             const nick = document.getElementById('nickname').value;
-            if(!id || !nick) { alert("Waduh! Masukkan ID & Nickname dulu ya!"); return; }
+            
+            // Ganti alert() dengan modal custom
+            if(!id || !nick) { 
+                document.getElementById('modalAlert').style.display = 'flex';
+                return; 
+            }
 
             currentOrder = { item, price, id, nick };
             document.getElementById('resItem').innerText = item;
@@ -229,6 +254,7 @@
         }
 
         function closeModal() { document.getElementById('modalCheckout').style.display = 'none'; }
+        function closeAlert() { document.getElementById('modalAlert').style.display = 'none'; }
 
         function sendToWA() {
             const msg = `Halo Admin LAXSTORE! 👋\n\nSaya ingin Top Up FF:\n📦 *Item:* ${currentOrder.item}\n💰 *Harga:* Rp ${currentOrder.price}\n🆔 *ID:* ${currentOrder.id}\n👤 *Nick:* ${currentOrder.nick}\n\nMohon instruksi pembayarannya Admin!`;
